@@ -9,9 +9,10 @@ import Header from './components/Header';
 import InputTask from './components/InputTask';
 import TaskFilter from './components/TaskFilter';
 import TaskList from './components/TaskList';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useLocalStorage('tasks', []);
   const [filter, setFilter] = useState('all');
 
   const deleteTask = id => {
