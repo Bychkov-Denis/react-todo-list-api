@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://bychkov-denis.github.io/react-todo-list",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -14,11 +13,16 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.2",
+    "@hookform/resolvers": "^5.2.2",
     "antd": "^6.3.7",
+    "axios": "^1.15.2",
     "gh-pages": "^6.3.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-toastify": "^11.1.0"
+    "react-hook-form": "^7.75.0",
+    "react-router-dom": "^7.14.2",
+    "react-toastify": "^11.1.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

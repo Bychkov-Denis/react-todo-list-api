@@ -14,7 +14,12 @@ import { toast } from 'react-toastify';
 
 const { Text } = Typography;
 
-const TaskItem = ({ task, deleteTask, changeIsDone, saveNewTaskTitle }) => {
+const TaskItem = ({
+  task,
+  deleteTask,
+  changeIsCompleted,
+  saveNewTaskTitle,
+}) => {
   const {
     token: { colorPrimary },
   } = theme.useToken();
@@ -42,7 +47,6 @@ const TaskItem = ({ task, deleteTask, changeIsDone, saveNewTaskTitle }) => {
 
     saveNewTaskTitle(task.id, newTaskTitle);
     setIsTaskEditing(false);
-    toast.success('Задача успешно отредактирована');
   };
 
   return !isTaskEditing ? (
@@ -56,10 +60,10 @@ const TaskItem = ({ task, deleteTask, changeIsDone, saveNewTaskTitle }) => {
       <Flex align="center" justify="space-between" gap={12}>
         <Flex align="center" gap={12} flex={1}>
           <Checkbox
-            checked={task.isDone}
-            onClick={() => changeIsDone(task.id)}
+            checked={task.isCompleted}
+            onChange={() => changeIsCompleted(task.id)}
           />
-          <Text delete={task.isDone} style={{ flex: 1, margin: 0 }}>
+          <Text delete={task.isCompleted} style={{ flex: 1, margin: 0 }}>
             {task.title}
           </Text>
         </Flex>

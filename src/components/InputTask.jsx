@@ -1,6 +1,7 @@
 import { Button, Flex, Input } from 'antd';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { todoService } from '../services/todoService';
 
 const InputTask = ({ setTasks }) => {
   const [title, setTitle] = useState('');
@@ -9,17 +10,22 @@ const InputTask = ({ setTasks }) => {
     setTitle(event.target.value);
   };
 
-  const addTask = () => {
-    if (title.trim()) {
-      setTasks(tasks => [
-        ...tasks,
-        { id: crypto.randomUUID(), title, isDone: false },
-      ]);
-      setTitle('');
-      toast.success('Задача успешно добавлена');
-    } else {
+  const addTask = async () => {
+    const trimmedTitle = title.trim();
+
+    if (!trimmedTitle) {
       toast.error('Название задачи не может быть пустым');
       return;
+    }
+
+    try {
+      const { data } = await todoService.create({ title: trimmedTitle });
+      setTasks(tasks => [...tasks, data]);
+      setTitle('');
+      toast.success('Задача успешно добавлена');
+    } catch ({ response }) {
+      const errorMessage = response?.data?.message;
+      toast.error(errorMessage);
     }
   };
 
