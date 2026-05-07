@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://bychkov-denis.github.io/react-todo-list-api/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
