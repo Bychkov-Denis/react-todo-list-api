@@ -1,8 +1,13 @@
 import { Badge, Button, Flex } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectFilter, selectTasks, setFilter } from '../redux/tasksSlice';
+import {
+  deleteCompletedTasks,
+  selectFilter,
+  selectTasks,
+  setFilter,
+} from '../redux/tasksSlice';
 
-const TaskFilter = ({ deleteCompletedTasks }) => {
+const TaskFilter = () => {
   const dispatch = useDispatch();
   const tasks = useSelector(selectTasks);
   const filter = useSelector(selectFilter);
@@ -10,6 +15,10 @@ const TaskFilter = ({ deleteCompletedTasks }) => {
   const allCount = tasks.length;
   const activeCount = tasks.filter(task => !task.isCompleted).length;
   const completedCount = tasks.filter(task => task.isCompleted).length;
+
+  const deleteCompletedTodos = () => {
+    dispatch(deleteCompletedTasks());
+  };
 
   return (
     <Flex gap="medium" style={{ justifyContent: 'center' }}>
@@ -38,7 +47,7 @@ const TaskFilter = ({ deleteCompletedTasks }) => {
           Завершённые
         </Button>
       </Badge>
-      <Button color="cyan" variant="solid" onClick={deleteCompletedTasks}>
+      <Button color="cyan" variant="solid" onClick={deleteCompletedTodos}>
         Удалить завершённые задачи
       </Button>
     </Flex>

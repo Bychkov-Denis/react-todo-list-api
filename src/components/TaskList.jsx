@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { selectFilter, selectFilteredTasks } from '../redux/tasksSlice';
 import TaskItem from './TaskItem';
 
-const TaskList = ({ deleteTask, saveNewTaskTitle }) => {
+const TaskList = () => {
   const filteredTasks = useSelector(selectFilteredTasks);
   const filter = useSelector(selectFilter);
 
@@ -23,12 +23,7 @@ const TaskList = ({ deleteTask, saveNewTaskTitle }) => {
       )}
       <Flex vertical gap="small">
         {filteredTasks.map(task => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            deleteTask={deleteTask}
-            saveNewTaskTitle={saveNewTaskTitle}
-          />
+          <TaskItem key={task.id} task={task} />
         ))}
       </Flex>
     </>

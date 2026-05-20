@@ -1,7 +1,8 @@
 import { Navigate } from 'react-router-dom';
+import { getTokenFromLocalStorage } from '../helpers';
 
 const PublicRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const token = getTokenFromLocalStorage();
 
   if (token) {
     return <Navigate to="/todos" />;

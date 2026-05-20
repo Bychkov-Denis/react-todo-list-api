@@ -36,7 +36,6 @@ export const addTask = createAsyncThunk(
   'tasks/addTask',
   async (newTaskTitle, { rejectWithValue }) => {
     if (!newTaskTitle.trim()) {
-      toast.error('Название задачи не может быть пустым');
       return rejectWithValue('Название задачи не может быть пустым');
     }
 
@@ -57,11 +56,70 @@ export const changeIsTaskCompleted = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const { data } = await todoService.updateIsCompleted(id);
-      return data;
+      toast.success('Статус заадчи успешно обновлён');
+      return data[0];
     } catch (error) {
       const errorMessage = error.response?.data?.message;
       toast.error(errorMessage);
       return rejectWithValue(errorMessage);
+    }
+  },
+);
+
+export const deleteTask = createAsyncThunk(
+  'tasks/deleteTask',
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await todoService.delete(id);
+      const { id: deletedTaskId } = data;
+      toast.success('Задача успешно удалена');
+      return deletedTaskId;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message;
+      toast.error(errorMessage);
+      rejectWithValue(errorMessage);
+    }
+  },
+);
+
+export const updateTaskTitle = createAsyncThunk(
+  'tasks/updateTaskTitle',
+  async (taskData, { rejectWithValue }) => {
+    const { id, newTitle } = taskData;
+
+    if (!newTitle.trim()) {
+      return rejectWithValue('Название задачи не может быть пустым');
+    }
+
+    try {
+      const { data: updatedTask } = await todoService.updateTitle(id, newTitle);
+      toast.success('Название задачи успешно обновлено');
+      return updatedTask;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message;
+      toast.error(errorMessage);
+      rejectWithValue(errorMessage);
+    }
+  },
+);
+
+export const deleteCompletedTasks = createAsyncThunk(
+  'tasks/deleteCompletedTasks',
+  async (_, { getState, rejectWithValue }) => {
+    const tasks = getState().tasks.tasks;
+    const deletedTasksId = tasks
+      .filter(task => task.isCompleted)
+      .map(task => task.id);
+
+    try {
+      for (const taskId of deletedTasksId) {
+        await todoService.delete(taskId);
+      }
+      toast.success('Все выполненные задачи успешно удалены');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message;
+      toast.error(errorMessage);
+      rejectWithValue(errorMessage);
     }
   },
 );
@@ -95,6 +153,17 @@ export const tasksSlice = createSlice({
       state.tasks = state.tasks.map(task =>
         task.id === action.payload.id ? action.payload : task,
       );
+    });
+    builder.addCase(deleteTask.fulfilled, (state, action) => {
+      state.tasks = state.tasks.filter(task => task.id !== action.payload);
+    });
+    builder.addCase(updateTaskTitle.fulfilled, (state, action) => {
+      state.tasks = state.tasks.map(task =>
+        task.id === action.payload.id ? action.payload : task,
+      );
+    });
+    builder.addCase(deleteCompletedTasks.fulfilled, state => {
+      state.tasks = state.tasks.filter(task => !task.isCompleted);
     });
     builder.addMatcher(isFulfilled, state => {
       state.loading = false;

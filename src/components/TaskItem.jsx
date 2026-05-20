@@ -12,15 +12,17 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   changeIsTaskCompleted,
+  deleteTask,
   selectEditingTaskId,
   selectEditingTaskTitle,
   setEditingTaskId,
   setEditingTaskTitle,
+  updateTaskTitle,
 } from '../redux/tasksSlice';
 
 const { Text } = Typography;
 
-const TaskItem = ({ task, deleteTask }) => {
+const TaskItem = ({ task }) => {
   const dispatch = useDispatch();
 
   const editingTaskId = useSelector(selectEditingTaskId);
@@ -46,23 +48,15 @@ const TaskItem = ({ task, deleteTask }) => {
     dispatch(setEditingTaskTitle(event.target.value));
   };
 
-  // const changeIsTaskEditing = () => {
-  //   setIsTaskEditing(isTaskEditing => !isTaskEditing);
-  // };
+  const deleteCurrentTask = () => {
+    dispatch(deleteTask(task.id));
+  };
 
-  // const cancelEditing = () => {
-  //   setIsTaskEditing(false);
-  // };
-
-  // const handleSaveNewTaskText = () => {
-  //   if (!newTaskTitle.trim()) {
-  //     toast.error('Название задачи не может быть пустым');
-  //     return;
-  //   }
-
-  //   saveNewTaskTitle(task.id, newTaskTitle);
-  //   setIsTaskEditing(false);
-  // };
+  const updateCurrentTaskTitle = () => {
+    dispatch(updateTaskTitle({ id: editingTaskId, newTitle: editingTaskTitle }))
+      .unwrap()
+      .then(() => stopTaskEditing());
+  };
 
   return !isTaskEditing ? (
     <Card
@@ -89,7 +83,7 @@ const TaskItem = ({ task, deleteTask }) => {
           />
           <DeleteOutlined
             style={{ fontSize: '18px', cursor: 'pointer', color: '#ff4d4f' }}
-            onClick={() => deleteTask(task.id)}
+            onClick={() => deleteCurrentTask(task.id)}
           />
         </Space>
       </Flex>
@@ -101,10 +95,10 @@ const TaskItem = ({ task, deleteTask }) => {
         placeholder="Введите новое название задачи..."
         autoFocus
         onChange={handleChangeEditingTaskTitle}
-        onPressEnter={null}
+        onPressEnter={updateCurrentTaskTitle}
       />
       <Space>
-        <Button type="primary" onClick={null}>
+        <Button type="primary" onClick={updateCurrentTaskTitle}>
           Сохранить
         </Button>
         <Button type="primary" danger onClick={stopTaskEditing}>

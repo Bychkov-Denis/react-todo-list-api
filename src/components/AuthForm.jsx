@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
+import { setTokenToLocalStorage } from '../helpers';
 import { authService } from '../services/authService';
 
 const authScheme = yup.object({
@@ -40,7 +41,7 @@ const AuthForm = () => {
       const { data } = await authService.login(userData);
 
       if (data.token) {
-        localStorage.setItem('token', data.token);
+        setTokenToLocalStorage(data.token);
       }
 
       reset();
