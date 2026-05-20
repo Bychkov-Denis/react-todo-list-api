@@ -1,13 +1,12 @@
 import { Empty, Flex } from 'antd';
+import { useSelector } from 'react-redux';
+import { selectFilter, selectFilteredTasks } from '../redux/tasksSlice';
 import TaskItem from './TaskItem';
 
-const TaskList = ({
-  tasks = [],
-  deleteTask,
-  changeIsCompleted,
-  saveNewTaskTitle,
-  currentFilter,
-}) => {
+const TaskList = ({ deleteTask, saveNewTaskTitle }) => {
+  const filteredTasks = useSelector(selectFilteredTasks);
+  const filter = useSelector(selectFilter);
+
   const message = {
     active: 'Нет активных задач',
     completed: 'Нет выполненных задач',
@@ -16,19 +15,18 @@ const TaskList = ({
 
   return (
     <>
-      {tasks.length === 0 && (
+      {filteredTasks.length === 0 && (
         <Empty
-          description={message[currentFilter] || message.all}
+          description={message[filter] || message.all}
           style={{ marginTop: '50px' }}
         />
       )}
       <Flex vertical gap="small">
-        {tasks.map(task => (
+        {filteredTasks.map(task => (
           <TaskItem
             key={task.id}
             task={task}
             deleteTask={deleteTask}
-            changeIsCompleted={changeIsCompleted}
             saveNewTaskTitle={saveNewTaskTitle}
           />
         ))}

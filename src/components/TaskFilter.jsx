@@ -1,11 +1,12 @@
 import { Badge, Button, Flex } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectFilter, selectTasks, setFilter } from '../redux/tasksSlice';
 
-const TaskFilter = ({
-  tasks = [],
-  currentFilter,
-  onFilterChange,
-  deleteCompletedTasks,
-}) => {
+const TaskFilter = ({ deleteCompletedTasks }) => {
+  const dispatch = useDispatch();
+  const tasks = useSelector(selectTasks);
+  const filter = useSelector(selectFilter);
+
   const allCount = tasks.length;
   const activeCount = tasks.filter(task => !task.isCompleted).length;
   const completedCount = tasks.filter(task => task.isCompleted).length;
@@ -14,16 +15,16 @@ const TaskFilter = ({
     <Flex gap="medium" style={{ justifyContent: 'center' }}>
       <Badge count={allCount} showZero color="blue">
         <Button
-          type={currentFilter === 'all' ? 'primary' : 'default'}
-          onClick={() => onFilterChange('all')}
+          type={filter === 'all' ? 'primary' : 'default'}
+          onClick={() => dispatch(setFilter('all'))}
         >
           Все
         </Button>
       </Badge>
       <Badge count={activeCount} showZero color="orange">
         <Button
-          type={currentFilter === 'active' ? 'primary' : 'default'}
-          onClick={() => onFilterChange('active')}
+          type={filter === 'active' ? 'primary' : 'default'}
+          onClick={() => dispatch(setFilter('active'))}
         >
           Активные
         </Button>
@@ -31,8 +32,8 @@ const TaskFilter = ({
 
       <Badge count={completedCount} showZero color="green">
         <Button
-          type={currentFilter === 'completed' ? 'primary' : 'default'}
-          onClick={() => onFilterChange('completed')}
+          type={filter === 'completed' ? 'primary' : 'default'}
+          onClick={() => dispatch(setFilter('completed'))}
         >
           Завершённые
         </Button>

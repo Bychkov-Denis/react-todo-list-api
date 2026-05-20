@@ -9,45 +9,60 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  changeIsTaskCompleted,
+  selectEditingTaskId,
+  selectEditingTaskTitle,
+  setEditingTaskId,
+  setEditingTaskTitle,
+} from '../redux/tasksSlice';
 
 const { Text } = Typography;
 
-const TaskItem = ({
-  task,
-  deleteTask,
-  changeIsCompleted,
-  saveNewTaskTitle,
-}) => {
+const TaskItem = ({ task, deleteTask }) => {
+  const dispatch = useDispatch();
+
+  const editingTaskId = useSelector(selectEditingTaskId);
+  const editingTaskTitle = useSelector(selectEditingTaskTitle);
+
   const {
     token: { colorPrimary },
   } = theme.useToken();
 
-  const [isTaskEditing, setIsTaskEditing] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState(task.title);
+  const isTaskEditing = editingTaskId === task.id;
 
-  const changeIsTaskEditing = () => {
-    setIsTaskEditing(isTaskEditing => !isTaskEditing);
+  const startTaskEditing = () => {
+    dispatch(setEditingTaskId(task.id));
+    dispatch(setEditingTaskTitle(task.title));
   };
 
-  const cancelEditing = () => {
-    setIsTaskEditing(false);
+  const stopTaskEditing = () => {
+    dispatch(setEditingTaskId(null));
+    dispatch(setEditingTaskTitle(''));
   };
 
-  const HandlechangeNewTaskText = event => {
-    setNewTaskTitle(event.target.value);
+  const handleChangeEditingTaskTitle = event => {
+    dispatch(setEditingTaskTitle(event.target.value));
   };
 
-  const handleSaveNewTaskText = () => {
-    if (!newTaskTitle.trim()) {
-      toast.error('Название задачи не может быть пустым');
-      return;
-    }
+  // const changeIsTaskEditing = () => {
+  //   setIsTaskEditing(isTaskEditing => !isTaskEditing);
+  // };
 
-    saveNewTaskTitle(task.id, newTaskTitle);
-    setIsTaskEditing(false);
-  };
+  // const cancelEditing = () => {
+  //   setIsTaskEditing(false);
+  // };
+
+  // const handleSaveNewTaskText = () => {
+  //   if (!newTaskTitle.trim()) {
+  //     toast.error('Название задачи не может быть пустым');
+  //     return;
+  //   }
+
+  //   saveNewTaskTitle(task.id, newTaskTitle);
+  //   setIsTaskEditing(false);
+  // };
 
   return !isTaskEditing ? (
     <Card
@@ -61,7 +76,7 @@ const TaskItem = ({
         <Flex align="center" gap={12} flex={1}>
           <Checkbox
             checked={task.isCompleted}
-            onChange={() => changeIsCompleted(task.id)}
+            onChange={() => dispatch(changeIsTaskCompleted(task.id))}
           />
           <Text delete={task.isCompleted} style={{ flex: 1, margin: 0 }}>
             {task.title}
@@ -70,7 +85,7 @@ const TaskItem = ({
         <Space size="middle">
           <EditOutlined
             style={{ fontSize: '18px', cursor: 'pointer' }}
-            onClick={changeIsTaskEditing}
+            onClick={startTaskEditing}
           />
           <DeleteOutlined
             style={{ fontSize: '18px', cursor: 'pointer', color: '#ff4d4f' }}
@@ -82,17 +97,17 @@ const TaskItem = ({
   ) : (
     <Flex align="center" gap="small">
       <Input
-        value={newTaskTitle}
+        value={editingTaskTitle}
         placeholder="Введите новое название задачи..."
         autoFocus
-        onChange={HandlechangeNewTaskText}
-        onPressEnter={handleSaveNewTaskText}
+        onChange={handleChangeEditingTaskTitle}
+        onPressEnter={null}
       />
       <Space>
-        <Button type="primary" onClick={handleSaveNewTaskText}>
+        <Button type="primary" onClick={null}>
           Сохранить
         </Button>
-        <Button type="primary" danger onClick={cancelEditing}>
+        <Button type="primary" danger onClick={stopTaskEditing}>
           Отмена
         </Button>
       </Space>
